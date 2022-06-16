@@ -47,4 +47,20 @@ public class UserJsonTest {
         int id = JsonPath.from(response.asString()).getInt("id");
         Assertions.assertEquals(1, id);
     }
+
+    @Test
+    @DisplayName("Deve verificar o segundo nivel")
+    public void verificarSegundoNivel () {
+
+        String baseUrl = "http://restapi.wcaquino.me/";
+
+        given()
+        .when()
+                .get(baseUrl + "users/2")
+        .then()
+                .statusCode(200)
+                .body("name", containsString("Joaquina")) // verificação do primeiro nivel do response
+                .body("endereco.rua", is("Rua dos bobos")); // verificação do segundo nivel do response
+
+    }
 }
