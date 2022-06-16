@@ -1,22 +1,23 @@
 package testRest;
 
-import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static io.restassured.RestAssured.*;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.request;
 import static org.hamcrest.Matchers.*;
 
 public class UserJsonTest {
 
+    private String baseUrl = "http://restapi.wcaquino.me/";
+
     @Test
     @DisplayName("Deve verificar primeiro item")
     public void primeiroItem () {
-
-        String baseUrl = "http://restapi.wcaquino.me/";
 
         given()
         .when()
@@ -31,8 +32,6 @@ public class UserJsonTest {
     @Test
     @DisplayName("Deve verificar primeiro nivel de outras formas")
     public void verificandoPrimeiroNivelDeOutraForma () {
-
-        String baseUrl = "http://restapi.wcaquino.me/";
 
         Response response = request(Method.GET,baseUrl + "users/1");
 
@@ -52,8 +51,6 @@ public class UserJsonTest {
     @DisplayName("Deve verificar o segundo nivel")
     public void verificarSegundoNivel () {
 
-        String baseUrl = "http://restapi.wcaquino.me/";
-
         given()
         .when()
                 .get(baseUrl + "users/2")
@@ -61,6 +58,23 @@ public class UserJsonTest {
                 .statusCode(200)
                 .body("name", containsString("Joaquina")) // verificação do primeiro nivel do response
                 .body("endereco.rua", is("Rua dos bobos")); // verificação do segundo nivel do response
+    }
 
+    @Test
+    @DisplayName("Deve verificar JSON com lista")
+    public void verificarListaJson () {
+
+        given()
+        .when()
+                .get(baseUrl + "users/3")
+        .then()
+                .statusCode(200)
+                .body("name", containsString("Ana")) // verificação do primeiro nivel do response
+                .body("filhos", hasSize(2)) // verificando o tamanho da lista
+                .body("filhos[0].name", is("Zezinho")) // verificando o valor do primeiro atributo da lista
+                .body("filhos[1].name", is("Luizinho")) // verificando o valor do segundo atributo da lista
+                .body("filhos.name", hasItem("Zezinho")) // verificando que na lista existe um determinado valor
+                .body("filhos.name", hasItems("Zezinho", "Luizinho")) // verificando que na lista existem determinados valores
+        ;
     }
 }
