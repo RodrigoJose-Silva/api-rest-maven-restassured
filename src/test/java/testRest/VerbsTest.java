@@ -5,6 +5,10 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -30,6 +34,29 @@ public class VerbsTest {
                 .body("id", is(notNullValue()))
                 .body("name", is("João da Silva"))
                 .body("age", is(30))
+        ;
+    }
+
+    @Test
+    @DisplayName("Deve salvar um usuário com MAP")
+    public void salvarUserComMap () {
+
+        Map<String, Object> params = new HashMap<String, Object>(); // criando MAP, um tipo de lista que armazena PARES
+        params.put("name", "Usuário via MAP");
+        params.put("age", 51);
+
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(params) // body JSON com valores e atributos a serem registrados
+                .when()
+                .post("users")// método POST para add novo registro
+                .then()
+                .log().all()
+                .statusCode(201)
+                .body("id", is(notNullValue()))
+                .body("name", is("Usuário via MAP"))
+                .body("age", is(51))
         ;
     }
 
