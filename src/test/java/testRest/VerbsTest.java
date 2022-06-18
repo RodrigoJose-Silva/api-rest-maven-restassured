@@ -104,4 +104,28 @@ public class VerbsTest {
                 .body("salary", is(1234.5678F))
         ;
     }
+
+    @Test
+    @DisplayName("Deve remover um usário")
+    public void removeUser () {
+        given()
+        .when()
+                .delete("users/2")
+        .then()
+                .statusCode(204)
+                ;
+    }
+
+    @Test
+    @DisplayName("Não deve remover um usário inexistente")
+    public void naoRemoveUserInexistente () {
+        given()
+                .log().all()
+        .when()
+                .delete("users/100")
+        .then()
+                .statusCode(400)
+                .body("error", is("Registro inexistente"))
+        ;
+    }
 }
