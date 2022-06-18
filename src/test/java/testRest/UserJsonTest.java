@@ -1,12 +1,12 @@
 package testRest;
 
+import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static io.restassured.RestAssured.given;
@@ -15,7 +15,10 @@ import static org.hamcrest.Matchers.*;
 
 public class UserJsonTest {
 
-    private String baseUrl = "http://restapi.wcaquino.me/";
+    @BeforeAll
+    public static void setup () {
+        RestAssured.baseURI= "http://restapi.wcaquino.me/";
+    }
 
     @Test
     @DisplayName("Deve verificar primeiro item")
@@ -23,7 +26,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users/1")
+                .get("users/1")
         .then()
                 .statusCode(200)
                 .body("id", is(1))
@@ -35,7 +38,7 @@ public class UserJsonTest {
     @DisplayName("Deve verificar primeiro nivel de outras formas")
     public void verificandoPrimeiroNivelDeOutraForma () {
 
-        Response response = request(Method.GET,baseUrl + "users/1");
+        Response response = request(Method.GET,"users/1");
 
         //path
         Assertions.assertEquals(new Integer(1), response.path("id"));
@@ -55,7 +58,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users/2")
+                .get("users/2")
         .then()
                 .statusCode(200)
                 .body("name", containsString("Joaquina")) // verificação do primeiro nivel do response
@@ -68,7 +71,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users/3")
+                .get("users/3")
         .then()
                 .statusCode(200)
                 .body("name", containsString("Ana")) // verificação do primeiro nivel do response
@@ -85,7 +88,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users/4")
+                .get("users/4")
         .then()
                 .statusCode(404)
                 .body("error", is("Usuário inexistente")) // validando mensagem de ERRO
@@ -98,7 +101,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users")
+                .get("users")
         .then()
                 .statusCode(200)
                 .body("$", hasSize(3)) // validando a qtde de objetos na lista
@@ -116,7 +119,7 @@ public class UserJsonTest {
 
         given()
         .when()
-                .get(baseUrl + "users")
+                .get("users")
         .then()
                 .statusCode(200)
                 .body("$", hasSize(3)) // validando a qtde de objetos na lista
@@ -132,5 +135,22 @@ public class UserJsonTest {
                 .body("id.max()", is(3)) // verifica o maior valor do atributo "id" na lista
                 .body("salary.min()", is(1234.5677F)) // verifica o menor valor do atributo "salary" da lista
                 .body("salary.findAll{it != null}.sum()", is(closeTo(3734.5678F, 0.001))); // verifica a soma dos valores diferente de NULL do atributo "salary"
+    }
+
+    @Test
+    @DisplayName("Devo Unir Json Path com Java")
+    public void unindoJsonPathComJava () {
+        ArrayList<String> names =
+        given()
+        .when()
+                .get("users")
+        .then()
+                .statusCode(200)
+                //.body("name.findAll{it.startsWith('Maria')}.collect{it.toUpperCase()}.toArray()", allOf(arrayContaining("MARIA JOAQUINA"), arrayWithSize(1)))
+                .extract().path("name.findAll{it.startsWith('Maria')}")
+        ;
+
+        Assertions.assertEquals(1, names.size());
+        Assertions.assertEquals(names.get(0).toUpperCase(), "maria joaquina".toUpperCase());
     }
 }
