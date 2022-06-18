@@ -48,7 +48,7 @@ public class VerbsTest {
         given()
                 .log().all()
                 .contentType(ContentType.JSON)
-                .body(params) // body JSON com valores e atributos a serem registrados
+                .body(params) // body JSON com valores e atributos a serem registrados conforme a config do MAP
                 .when()
                 .post("users")// método POST para add novo registro
                 .then()
@@ -57,6 +57,27 @@ public class VerbsTest {
                 .body("id", is(notNullValue()))
                 .body("name", is("Usuário via MAP"))
                 .body("age", is(51))
+        ;
+    }
+
+    @Test
+    @DisplayName("Deve salvar um usuário com Object")
+    public void salvarUserComObject () {
+
+        User user = new User("Usuário através de um objeto", 33); // chamando a classe "User", ja delarando os valores conforme configurado na classe
+
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(user) // body JSON com valores e atributos a serem registrados conforme a classe
+                .when()
+                .post("users")// método POST para add novo registro
+                .then()
+                .log().all()
+                .statusCode(201)
+                .body("id", is(notNullValue()))
+                .body("name", is("Usuário através de um objeto"))
+                .body("age", is(33))
         ;
     }
 
