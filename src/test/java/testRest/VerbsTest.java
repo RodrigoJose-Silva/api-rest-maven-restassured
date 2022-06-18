@@ -31,7 +31,39 @@ public class VerbsTest {
                 .body("name", is("João da Silva"))
                 .body("age", is(30))
         ;
+    }
 
+    @Test
+    @DisplayName("Não deve salvar usuário sem nome")
+    public void naoDeveSalvarUsuarioSemNome () {
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body("{ \"name\": \"\", \"age\": 30}")
+        .when()
+                .post("users")
+                .then()
+                .log().all()
+        .statusCode(400)
+                .body("error", is("Name é um atributo obrigatório"))
+                ;
+    }
 
+    @Test
+    @DisplayName("Deve salvar um usuário via XML")
+    public void salvarUserXML () {
+        given()
+                .log().all()
+                .contentType(ContentType.XML)
+                .body("<user>" + "<name>Joao de Barro</name>\n" + "<age>33</age>\n" + "</user>")
+        .when()
+                .post("usersXML")
+        .then()
+                .log().all()
+                .statusCode(201)
+                .body("user.@id", is(notNullValue()))
+                .body("user.name", is("Joao de Barro"))
+                .body("user.age", is("33"))
+        ;
     }
 }
