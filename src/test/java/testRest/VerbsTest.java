@@ -66,4 +66,23 @@ public class VerbsTest {
                 .body("user.age", is("33"))
         ;
     }
+
+    @Test
+    @DisplayName("Deve alterar um usuário")
+    public void alterarUser () {
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body("{ \"name\": \"Jose de Barro\", \"age\": 44}")
+        .when()
+                .put("users/1")
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("id", is(1))
+                .body("name", is("Jose de Barro"))
+                .body("age", is(44))
+                .body("salary", is(1234.5678F))
+        ;
+    }
 }
