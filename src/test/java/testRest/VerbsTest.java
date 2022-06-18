@@ -2,6 +2,7 @@ package testRest;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,9 +50,9 @@ public class VerbsTest {
                 .log().all()
                 .contentType(ContentType.JSON)
                 .body(params) // body JSON com valores e atributos a serem registrados conforme a config do MAP
-                .when()
+        .when()
                 .post("users")// método POST para add novo registro
-                .then()
+        .then()
                 .log().all()
                 .statusCode(201)
                 .body("id", is(notNullValue()))
@@ -70,15 +71,38 @@ public class VerbsTest {
                 .log().all()
                 .contentType(ContentType.JSON)
                 .body(user) // body JSON com valores e atributos a serem registrados conforme a classe
-                .when()
+        .when()
                 .post("users")// método POST para add novo registro
-                .then()
+        .then()
                 .log().all()
                 .statusCode(201)
                 .body("id", is(notNullValue()))
                 .body("name", is("Usuário através de um objeto"))
                 .body("age", is(33))
         ;
+    }
+
+    @Test
+    @DisplayName("Deve deserializar um Object ao salvar um usuário")
+    public void deserializarObject () {
+
+        User user = new User("Usuário deserializado", 33); // chamando a classe "User", ja delarando os valores conforme configurado na classe
+
+        User usuarioInserido = given() // add uma variável para receber o retorno desta request
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(user) // body JSON com valores e atributos a serem registrados conforme a classe
+        .when()
+                .post("users")// método POST para add novo registro
+        .then()
+                .log().all()
+                .statusCode(201)
+                .extract().body().as(User.class) //extraindo o BODY do response para um arquivo da classe informada
+        ;
+
+        System.out.println(usuarioInserido);
+        Assertions.assertEquals("Usuário deserializado", usuarioInserido.getName()); // verificando o valor do atributo "name"
+        Assertions.assertEquals(33, usuarioInserido.getAge()); // verificando o valor do atributo "age"
     }
 
     @Test

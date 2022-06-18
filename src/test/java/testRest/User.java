@@ -1,6 +1,8 @@
 package testRest;
 
 public class User { //classe de serialização do ojeto JSON
+
+    private Long id;
     private String name;
     private Integer age;
     private Double salary;
@@ -9,6 +11,14 @@ public class User { //classe de serialização do ojeto JSON
         super();
         this.name = name;
         this.age = age;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -33,5 +43,15 @@ public class User { //classe de serialização do ojeto JSON
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    @Override
+    public String toString() {  // criado o método para na forma da conversão
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", salary=" + salary +
+                '}';
     }
 }
