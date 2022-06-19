@@ -1,11 +1,21 @@
 package testRest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name="user")  // anotação necessária para o teste de salvar usuário com XML
+@XmlAccessorType(XmlAccessType.FIELD) // pega todos atributos da classe e GETS não cobertos
 public class User { //classe de serialização do ojeto JSON
 
     private Long id;
     private String name;
     private Integer age;
     private Double salary;
+
+    public User () {
+        // método sem argumento necessário para o teste de salvar usuário com XML
+    }
 
     public User(String name, Integer age) {  // construtor para os atributos "name" e "age"
         super();

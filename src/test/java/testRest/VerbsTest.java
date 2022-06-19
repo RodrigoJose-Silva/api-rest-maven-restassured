@@ -140,6 +140,27 @@ public class VerbsTest {
     }
 
     @Test
+    @DisplayName("Deve salvar um usuário via XML usando um objeto")
+    public void salvarUserXMLcomOBject () {
+
+        User user = new User("Usuario XML", 40); // add uma variável para apontar usuario e idade
+
+        given()
+                .log().all()
+                .contentType(ContentType.XML)
+                .body(user) // body XML com valores e atributos a serem registrados
+                .when()
+                .post("usersXML")// método de add novo registro
+                .then()
+                .log().all()
+                .statusCode(201)
+                .body("user.@id", is(notNullValue()))
+                .body("user.name", is("Usuario XML"))
+                .body("user.age", is("40"))
+        ;
+    }
+
+    @Test
     @DisplayName("Deve alterar um usuário")
     public void alterarUser () {
         given()
