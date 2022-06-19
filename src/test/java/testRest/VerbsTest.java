@@ -17,7 +17,7 @@ public class VerbsTest {
 
     @BeforeAll
     public static void setup () {
-        RestAssured.baseURI= "http://restapi.wcaquino.me/";
+        baseURI= "http://restapi.wcaquino.me/";
     }
 
     @Test

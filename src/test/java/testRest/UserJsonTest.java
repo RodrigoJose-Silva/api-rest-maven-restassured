@@ -1,23 +1,25 @@
 package testRest;
 
-import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.request;
+import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class UserJsonTest {
 
     @BeforeAll
     public static void setup () {
-        RestAssured.baseURI= "http://restapi.wcaquino.me/";
+
+        baseURI= "http://restapi.wcaquino.me/";
     }
 
     @Test
