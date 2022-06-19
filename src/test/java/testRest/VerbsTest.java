@@ -100,7 +100,6 @@ public class VerbsTest {
                 .extract().body().as(User.class) //extraindo o BODY do response para um arquivo da classe informada
         ;
 
-        System.out.println(usuarioInserido);
         Assertions.assertEquals("Usuário deserializado", usuarioInserido.getName()); // verificando o valor do atributo "name"
         Assertions.assertEquals(33, usuarioInserido.getAge()); // verificando o valor do atributo "age"
     }
@@ -149,15 +148,37 @@ public class VerbsTest {
                 .log().all()
                 .contentType(ContentType.XML)
                 .body(user) // body XML com valores e atributos a serem registrados
-                .when()
+        .when()
                 .post("usersXML")// método de add novo registro
-                .then()
+        .then()
                 .log().all()
                 .statusCode(201)
                 .body("user.@id", is(notNullValue()))
                 .body("user.name", is("Usuario XML"))
                 .body("user.age", is("40"))
         ;
+    }
+
+    @Test
+    @DisplayName("Deve deserializar um XML ao salvar um usuário")
+    public void deserializandoUserXMLcomOBject () {
+
+        User user = new User("Usuario XML", 40); // add uma variável para apontar usuario e idade
+
+        User usuarioInserido = given()
+                .log().all()
+                .contentType(ContentType.XML)
+                .body(user) // body XML com valores e atributos a serem registrados
+        .when()
+                .post("usersXML")// método de add novo registro
+        .then()
+                .log().all()
+                .statusCode(201)
+                .extract().body().as(User.class)
+        ;
+
+        Assertions.assertEquals("Usuario XML", usuarioInserido.getName());
+        Assertions.assertEquals(40, usuarioInserido.getAge());
     }
 
     @Test
